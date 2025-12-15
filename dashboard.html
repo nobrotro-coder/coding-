@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CodingNano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .progress-ring { transform: rotate(-90deg); }
+        .achievement-badge { transition: all 0.3s ease; }
+        .achievement-badge:hover { transform: scale(1.05); }
+        .skill-node { transition: all 0.3s ease; cursor: pointer; }
+        .skill-node:hover { transform: scale(1.1); }
+        .skill-node.completed { filter: brightness(1.2); }
+        .streak-day { width: 12px; height: 12px; border-radius: 2px; margin: 1px; }
+        .streak-day.active { background-color: #10b981; }
+        .streak-day.inactive { background-color: #e5e7eb; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-r from-amber-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">CN</span>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">CodingNano</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Home</a>
+                    <a href="challenges.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Challenges</a>
+                    <a href="lessons.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Lessons</a>
+                    <a href="dashboard.html" class="text-slate-900 font-semibold">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-24 pb-8 bg-gradient-to-r from-slate-800 to-slate-700 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">Welcome back, Code Learner!</h1>
+                    <p class="text-gray-300 text-lg">Here's your coding progress and achievements</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-2xl font-bold" data-progress="streak">0</div>
+                    <div class="text-gray-300">Day Streak 🔥</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Overview -->
+    <section class="py-8 -mt-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-emerald-600" data-progress="challenges">0</div>
+                            <div class="text-gray-600">Challenges</div>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                            <span class="text-emerald-600 text-xl">🎯</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-600" data-progress="lessons">0</div>
+                            <div class="text-gray-600">Lessons</div>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <span class="text-blue-600 text-xl">📚</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-amber-600" data-progress="points">0</div>
+                            <div class="text-gray-600">Points</div>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <span class="text-amber-600 text-xl">⭐</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-2xl font-bold text-purple-600" id="rank">Beginner</div>
+                            <div class="text-gray-600">Rank</div>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <span class="text-purple-600 text-xl">🏆</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Dashboard Content -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Progress Charts -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Learning Progress</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Weekly Activity</h3>
+                                <div id="activity-chart" class="h-64"></div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-4">Skill Distribution</h3>
+                                <div id="skill-chart" class="h-64"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skill Tree -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Skill Tree</h2>
+                        <div class="relative">
+                            <div class="grid grid-cols-4 gap-4" id="skill-tree">
+                                <!-- Skill nodes will be populated by JavaScript -->
+                            </div>
+                            <svg class="absolute inset-0 w-full h-full pointer-events-none" id="skill-connections">
+                                <!-- Connection lines will be drawn here -->
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Recent Activity</h2>
+                        <div class="space-y-4" id="recent-activity">
+                            <!-- Activity items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-8">
+                    <!-- Streak Calendar -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Coding Streak</h2>
+                        <div class="text-center mb-6">
+                            <div class="text-3xl font-bold text-emerald-600 mb-2" data-progress="streak">0</div>
+                            <div class="text-gray-600">Current Streak</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1 mb-4" id="streak-calendar">
+                            <!-- Calendar will be populated by JavaScript -->
+                        </div>
+                        <div class="text-xs text-gray-500 text-center">
+                            Last 30 days
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Achievements</h2>
+                        <div class="grid grid-cols-3 gap-4" id="achievements-grid">
+                            <!-- Achievements will be populated by JavaScript -->
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button class="text-emerald-600 hover:text-emerald-700 font-medium text-sm">
+                                View All Achievements
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Quick Actions</h2>
+                        <div class="space-y-3">
+                            <a href="challenges.html" class="block w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium text-center transition-colors">
+                                Start Daily Challenge
+                            </a>
+                            <a href="lessons.html" class="block w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium text-center transition-colors">
+                                Continue Learning
+                            </a>
+                            <button class="block w-full w-full bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium text-center transition-colors">
+                                Set Learning Goal
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Leaderboard -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h2 class="text-xl font-bold text-gray-800 mb-6">Leaderboard</h2>
+                        <div class="space-y-3" id="leaderboard">
+                            <!-- Leaderboard will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <div class="w-8 h-8 bg-gradient-to-r from-amber-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">CN</span>
+                    </div>
+                    <span class="text-xl font-bold">CodingNano</span>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    © 2025 CodingNano. Empowering developers through nano-learning.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        // Dashboard functionality
+        class DashboardManager {
+            constructor() {
+                this.userData = this.loadUserData();
+                this.init();
+            }
+
+            init() {
+                this.updateStats();
+                this.initializeCharts();
+                this.renderSkillTree();
+                this.renderRecentActivity();
+                this.renderStreakCalendar();
+                this.renderAchievements();
+                this.renderLeaderboard();
+                this.animateElements();
+            }
+
+            loadUserData() {
+                // Simulate user data - in real app, this would come from the main app
+                return {
+                    name: 'Code Learner',
+                    streak: 7,
+                    totalPoints: 245,
+                    completedChallenges: [1, 2, 3],
+                    completedLessons: [1, 2],
+                    achievements: ['first_challenge', 'streak_7'],
+                    joinDate: new Date().toISOString(),
+                    weeklyActivity: [2, 3, 1, 4, 2, 1, 3],
+                    skills: {
+                        javascript: 75,
+                        python: 45,
+                        web: 60,
+                        algorithms: 30
+                    }
+                };
+            }
+
+            updateStats() {
+                document.querySelectorAll('[data-progress]').forEach(element => {
+                    const type = element.dataset.progress;
+                    switch (type) {
+                        case 'challenges':
+                            element.textContent = this.userData.completedChallenges.length;
+                            break;
+                        case 'lessons':
+                            element.textContent = this.userData.completedLessons.length;
+                            break;
+                        case 'points':
+                            element.textContent = this.userData.totalPoints;
+                            break;
+                        case 'streak':
+                            element.textContent = this.userData.streak;
+                            break;
+                    }
+                });
+
+                // Update rank
+                const rank = this.calculateRank();
+                document.getElementById('rank').textContent = rank;
+            }
+
+            calculateRank() {
+                const points = this.userData.totalPoints;
+                if (points >= 500) return 'Expert';
+                if (points >= 250) return 'Advanced';
+                if (points >= 100) return 'Intermediate';
+                return 'Beginner';
+            }
+
+            initializeCharts() {
+                this.createActivityChart();
+                this.createSkillChart();
+            }
+
+            createActivityChart() {
+                const chartElement = document.getElementById('activity-chart');
+                if (!chartElement) return;
+
+                const chart = echarts.init(chartElement);
+                const option = {
+                    tooltip: { trigger: 'axis' },
+                    xAxis: {
+                        type: 'category',
+                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        axisLine: { show: false },
+                        axisTick: { show: false }
+                    },
+                    yAxis: { 
+                        type: 'value',
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { lineStyle: { color: '#f3f4f6' } }
+                    },
+                    series: [{
+                        data: this.userData.weeklyActivity,
+                        type: 'bar',
+                        itemStyle: { 
+                            color: '#10b981',
+                            borderRadius: [4, 4, 0, 0]
+                        },
+                        barWidth: '60%'
+                    }],
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    }
+                };
+                chart.setOption(option);
+            }
+
+            createSkillChart() {
+                const chartElement = document.getElementById('skill-chart');
+                if (!chartElement) return;
+
+                const chart = echarts.init(chartElement);
+                const option = {
+                    tooltip: { trigger: 'item' },
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: { show: false },
+                        emphasis: {
+                            label: { show: true, fontSize: '14', fontWeight: 'bold' }
+                        },
+                        data: [
+                            { value: this.userData.skills.javascript, name: 'JavaScript', itemStyle: { color: '#f59e0b' } },
+                            { value: this.userData.skills.python, name: 'Python', itemStyle: { color: '#3b82f6' } },
+                            { value: this.userData.skills.web, name: 'Web Dev', itemStyle: { color: '#10b981' } },
+                            { value: this.userData.skills.algorithms, name: 'Algorithms', itemStyle: { color: '#8b5cf6' } }
+                        ]
+                    }]
+                };
+                chart.setOption(option);
+            }
+
+            renderSkillTree() {
+                const skillTree = document.getElementById('skill-tree');
+                const skills = [
+                    { name: 'Variables', completed: true, x: 0, y: 0 },
+                    { name: 'Functions', completed: true, x: 1, y: 0 },
+                    { name: 'Arrays', completed: true, x: 2, y: 0 },
+                    { name: 'Objects', completed: false, x: 3, y: 0 },
+                    { name: 'DOM', completed: true, x: 0, y: 1 },
+                    { name: 'Events', completed: true, x: 1, y: 1 },
+                    { name: 'Async', completed: false, x: 2, y: 1 },
+                    { name: 'APIs', completed: false, x: 3, y: 1 },
+                    { name: 'React', completed: false, x: 0, y: 2 },
+                    { name: 'Node.js', completed: false, x: 1, y: 2 },
+                    { name: 'Testing', completed: false, x: 2, y: 2 },
+                    { name: 'Deploy', completed: false, x: 3, y: 2 }
+                ];
+
+                skillTree.innerHTML = '';
+                skills.forEach(skill => {
+                    const skillElement = document.createElement('div');
+                    skillElement.className = `skill-node ${skill.completed ? 'completed' : ''} flex items-center justify-center w-16 h-16 rounded-full border-4 ${
+                        skill.completed ? 'bg-emerald-500 border-emerald-600' : 'bg-gray-200 border-gray-300'
+                    }`;
+                    skillElement.innerHTML = `
+                        <span class="text-xs font-semibold text-center ${skill.completed ? 'text-white' : 'text-gray-600'}">
+                            ${skill.name}
+                        </span>
+                    `;
+                    skillElement.style.gridColumn = skill.x + 1;
+                    skillElement.style.gridRow = skill.y + 1;
+                    skillTree.appendChild(skillElement);
+                });
+            }
+
+            renderRecentActivity() {
+                const activities = [
+                    { type: 'challenge', title: 'Completed "Array Sum"', time: '2 hours ago', icon: '🎯' },
+                    { type: 'lesson', title: 'Finished "JavaScript Basics"', time: '1 day ago', icon: '📚' },
+                    { type: 'achievement', title: 'Earned "Week Warrior"', time: '2 days ago', icon: '🏆' },
+                    { type: 'challenge', title: 'Completed "Hello World"', time: '3 days ago', icon: '🎯' },
+                    { type: 'streak', title: '7-day streak achieved', time: '1 week ago', icon: '🔥' }
+                ];
+
+                const container = document.getElementById('recent-activity');
+                container.innerHTML = '';
+
+                activities.forEach(activity => {
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'flex items-center space-x-4 p-4 bg-gray-50 rounded-lg';
+                    activityElement.innerHTML = `
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                            <span class="text-lg">${activity.icon}</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">${activity.title}</div>
+                            <div class="text-sm text-gray-500">${activity.time}</div>
+                        </div>
+                    `;
+                    container.appendChild(activityElement);
+                });
+            }
+
+            renderStreakCalendar() {
+                const calendar = document.getElementById('streak-calendar');
+                calendar.innerHTML = '';
+
+                // Generate last 30 days
+                for (let i = 29; i >= 0; i--) {
+                    const day = document.createElement('div');
+                    day.className = 'streak-day';
+                    
+                    // Simulate activity (in real app, this would come from user data)
+                    const hasActivity = Math.random() > 0.3;
+                    day.classList.add(hasActivity ? 'active' : 'inactive');
+                    
+                    calendar.appendChild(day);
+                }
+            }
+
+            renderAchievements() {
+                const achievements = [
+                    { id: 'first_challenge', name: 'First Steps', icon: '🎯', unlocked: true },
+                    { id: 'streak_7', name: 'Week Warrior', icon: '🔥', unlocked: true },
+                    { id: 'points_100', name: 'Century Club', icon: '💯', unlocked: false },
+                    { id: 'challenge_master', name: 'Challenge Master', icon: '👑', unlocked: false },
+                    { id: 'speed_coder', name: 'Speed Coder', icon: '⚡', unlocked: false },
+                    { id: 'perfect_score', name: 'Perfect Score', icon: '🌟', unlocked: false }
+                ];
+
+                const container = document.getElementById('achievements-grid');
+                container.innerHTML = '';
+
+                achievements.forEach(achievement => {
+                    const achievementElement = document.createElement('div');
+                    achievementElement.className = `achievement-badge text-center p-3 rounded-lg ${
+                        achievement.unlocked ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50 border border-gray-200'
+                    }`;
+                    
+                    achievementElement.innerHTML = `
+                        <div class="text-2xl mb-2 ${achievement.unlocked ? '' : 'grayscale opacity-50'}">${achievement.icon}</div>
+                        <div class="text-xs font-medium ${achievement.unlocked ? 'text-emerald-800' : 'text-gray-500'}">
+                            ${achievement.name}
+                        </div>
+                    `;
+                    
+                    container.appendChild(achievementElement);
+                });
+            }
+
+            renderLeaderboard() {
+                const leaderboard = [
+                    { name: 'You', points: this.userData.totalPoints, rank: 1, isUser: true },
+                    { name: 'CodeMaster', points: 320, rank: 2 },
+                    { name: 'DevPro', points: 285, rank: 3 },
+                    { name: 'ScriptKid', points: 250, rank: 4 },
+                    { name: 'AlgoExpert', points: 220, rank: 5 }
+                ];
+
+                const container = document.getElementById('leaderboard');
+                container.innerHTML = '';
+
+                leaderboard.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = `flex items-center justify-between p-3 rounded-lg ${
+                        user.isUser ? 'bg-emerald-50 border border-emerald-200' : 'bg-gray-50'
+                    }`;
+                    
+                    userElement.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center ${
+                                user.isUser ? 'bg-emerald-500 text-white' : 'bg-gray-300 text-gray-600'
+                            }">
+                                ${user.rank}
+                            </div>
+                            <div>
+                                <div class="font-medium ${user.isUser ? 'text-emerald-800' : 'text-gray-800'}">
+                                    ${user.name}
+                                </div>
+                                <div class="text-sm text-gray-500">${user.points} points</div>
+                            </div>
+                        </div>
+                        ${user.isUser ? '<div class="text-emerald-600 text-sm font-medium">You</div>' : ''}
+                    `;
+                    
+                    container.appendChild(userElement);
+                });
+            }
+
+            animateElements() {
+                if (typeof anime !== 'undefined') {
+                    // Animate stats cards
+                    anime({
+                        targets: '.card-hover',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 600,
+                        delay: anime.stagger(100)
+                    });
+
+                    // Animate achievement badges
+                    anime({
+                        targets: '.achievement-badge',
+                        scale: [0.8, 1],
+                        opacity: [0, 1],
+                        duration: 400,
+                        delay: anime.stagger(50)
+                    });
+
+                    // Animate skill nodes
+                    anime({
+                        targets: '.skill-node',
+                        scale: [0, 1],
+                        duration: 500,
+                        delay: anime.stagger(100)
+                    });
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new DashboardManager();
+        });
+    </script>
+</body>
+</html>

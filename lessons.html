@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming Lessons - CodingNano</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .lesson-card { transition: all 0.3s ease; }
+        .lesson-card:hover { transform: translateY(-2px); }
+        .lesson-card.completed { opacity: 0.8; }
+        .lesson-card.completed .lesson-image { filter: grayscale(100%); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-r from-amber-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">CN</span>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">CodingNano</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Home</a>
+                    <a href="challenges.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Challenges</a>
+                    <a href="lessons.html" class="text-slate-900 font-semibold">Lessons</a>
+                    <a href="dashboard.html" class="text-slate-600 hover:text-slate-900 font-medium transition-colors">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <section class="pt-24 pb-12 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Programming Lessons</h1>
+                <p class="text-xl text-emerald-100 max-w-3xl mx-auto mb-8">
+                    Master programming concepts through bite-sized, interactive lessons designed for modern learners.
+                </p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-2xl mx-auto">
+                    <div class="relative">
+                        <input type="text" id="lesson-search" placeholder="Search lessons..." 
+                               class="w-full px-6 py-4 pr-12 rounded-xl text-gray-800 text-lg focus:outline-none focus:ring-4 focus:ring-emerald-300">
+                        <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="py-8 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-3">
+                    <button data-filter="all" class="filter-btn px-4 py-2 rounded-full bg-emerald-500 text-white font-medium transition-colors">
+                        All Lessons
+                    </button>
+                    <button data-filter="javascript" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium transition-colors">
+                        JavaScript
+                    </button>
+                    <button data-filter="python" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium transition-colors">
+                        Python
+                    </button>
+                    <button data-filter="web" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium transition-colors">
+                        Web Development
+                    </button>
+                    <button data-filter="algorithms" class="filter-btn px-4 py-2 rounded-full bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium transition-colors">
+                        Algorithms
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <select id="sort-select" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="default">Sort by: Default</option>
+                        <option value="difficulty">Sort by: Difficulty</option>
+                        <option value="duration">Sort by: Duration</option>
+                        <option value="title">Sort by: Title</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Lessons Carousel -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Featured Lessons</h2>
+                <p class="text-lg text-gray-600">Start with our most popular and highly-rated lessons</p>
+            </div>
+            
+            <div class="splide" id="featured-carousel">
+                <div class="splide__track">
+                    <ul class="splide__list" id="featured-lessons">
+                        <!-- Featured lessons will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Lessons Grid -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">All Lessons</h2>
+                <div class="text-gray-600">
+                    <span id="lesson-count">Loading...</span> lessons available
+                </div>
+            </div>
+            
+            <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Lessons will be populated by JavaScript -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center mt-12">
+                <button id="load-more-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-semibold transition-colors">
+                    Load More Lessons
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Paths Section -->
+    <section class="py-16 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Learning Paths</h2>
+                <p class="text-lg text-gray-600">Follow structured paths to master specific skills</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- JavaScript Path -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-white text-2xl">JS</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">JavaScript Mastery</h3>
+                    <p class="text-gray-600 mb-6">
+                        From variables to advanced concepts. Master the language of the web with hands-on practice.
+                    </p>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            12 lessons • 2 hours total
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Beginner to Intermediate
+                        </div>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-white py-3 rounded-lg font-semibold hover:from-yellow-500 hover:to-orange-600 transition-all">
+                        Start Path
+                    </button>
+                </div>
+
+                <!-- Python Path -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-white text-2xl">PY</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Python Fundamentals</h3>
+                    <p class="text-gray-600 mb-6">
+                        Learn Python from scratch. Perfect for data science, web development, and automation.
+                    </p>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            15 lessons • 3 hours total
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Beginner to Intermediate
+                        </div>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all">
+                        Start Path
+                    </button>
+                </div>
+
+                <!-- Web Development Path -->
+                <div class="bg-white rounded-xl p-8 shadow-lg card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-6">
+                        <span class="text-white text-2xl">WEB</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Web Development</h3>
+                    <p class="text-gray-600 mb-6">
+                        Build modern websites with HTML, CSS, and JavaScript. Create responsive, beautiful web applications.
+                    </p>
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                            18 lessons • 4 hours total
+                        </div>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            Beginner to Advanced
+                        </div>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 rounded-lg font-semibold hover:from-emerald-600 hover:to-teal-700 transition-all">
+                        Start Path
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <div class="w-8 h-8 bg-gradient-to-r from-amber-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">CN</span>
+                    </div>
+                    <span class="text-xl font-bold">CodingNano</span>
+                </div>
+                <div class="text-gray-400 text-sm">
+                    © 2025 CodingNano. Empowering developers through nano-learning.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        // Lesson management functionality
+        class LessonManager {
+            constructor() {
+                this.lessons = [];
+                this.filteredLessons = [];
+                this.currentFilter = 'all';
+                this.currentSort = 'default';
+                this.displayedCount = 12;
+                this.init();
+            }
+
+            init() {
+                this.loadLessons();
+                this.setupEventListeners();
+                this.initializeCarousel();
+                this.renderLessons();
+            }
+
+            loadLessons() {
+                this.lessons = [
+                    {
+                        id: 1,
+                        title: 'JavaScript Basics',
+                        description: 'Learn the fundamentals of JavaScript programming including variables, functions, and data types.',
+                        duration: 10,
+                        difficulty: 'beginner',
+                        category: 'javascript',
+                        topics: ['Variables', 'Functions', 'Data Types'],
+                        completed: false,
+                        featured: true,
+                        rating: 4.8,
+                        students: 15420,
+                        image: 'https://kimi-web-img.moonshot.cn/img/i.ytimg.com/e8ad0ba146c66c65571e2b845ab3a7f66df315c3.jpg'
+                    },
+                    {
+                        id: 2,
+                        title: 'Python Fundamentals',
+                        description: 'Master Python syntax and basic concepts including lists, dictionaries, and control flow.',
+                        duration: 15,
+                        difficulty: 'beginner',
+                        category: 'python',
+                        topics: ['Syntax', 'Lists', 'Dictionaries'],
+                        completed: false,
+                        featured: true,
+                        rating: 4.9,
+                        students: 12350,
+                        image: 'https://kimi-web-img.moonshot.cn/img/cdn.pixabay.com/55f103cb7aca0cb47cb3ed9b541ceb45b241fa48.jpg'
+                    },
+                    {
+                        id: 3,
+                        title: 'HTML & CSS',
+                        description: 'Build beautiful web pages with HTML structure and CSS styling. Learn responsive design principles.',
+                        duration: 12,
+                        difficulty: 'beginner',
+                        category: 'web',
+                        topics: ['Elements', 'Styling', 'Layout'],
+                        completed: false,
+                        featured: true,
+                        rating: 4.7,
+                        students: 18900,
+                        image: 'https://kimi-web-img.moonshot.cn/img/fileserver.teachstarter.com/cdb77676c658d6057aa82b2d81e46f789a53138b.png'
+                    },
+                    {
+                        id: 4,
+                        title: 'Data Structures',
+                        description: 'Understand arrays, objects, sets, and maps. Learn when and how to use each data structure.',
+                        duration: 20,
+                        difficulty: 'intermediate',
+                        category: 'algorithms',
+                        topics: ['Arrays', 'Objects', 'Sets'],
+                        completed: false,
+                        featured: false,
+                        rating: 4.6,
+                        students: 8750,
+                        image: 'https://kimi-web-img.moonshot.cn/img/img-blog.csdnimg.cn/963f6d87a019df97c21a96fbc78aadd89e9567b9.png'
+                    },
+                    {
+                        id: 5,
+                        title: 'React Components',
+                        description: 'Build modern UIs with React. Learn about components, state, props, and hooks.',
+                        duration: 18,
+                        difficulty: 'intermediate',
+                        category: 'javascript',
+                        topics: ['Components', 'State', 'Props'],
+                        completed: false,
+                        featured: false,
+                        rating: 4.8,
+                        students: 11200,
+                        image: 'https://kimi-web-img.moonshot.cn/img/d1ng1bucl7w66k.cloudfront.net/2ccce4d1d6ab94908e04d8f79f5659ab30bf3512.png'
+                    },
+                    {
+                        id: 6,
+                        title: 'Node.js Basics',
+                        description: 'Learn server-side JavaScript with Node.js. Build APIs and handle file operations.',
+                        duration: 16,
+                        difficulty: 'intermediate',
+                        category: 'javascript',
+                        topics: ['Modules', 'File System', 'HTTP'],
+                        completed: false,
+                        featured: false,
+                        rating: 4.5,
+                        students: 6800,
+                        image: 'https://kimi-web-img.moonshot.cn/img/www.vedantu.com/a61390c13e84c2c80844c365c0780fc4e92305fa.png'
+                    },
+                    {
+                        id: 7,
+                        title: 'CSS Flexbox & Grid',
+                        description: 'Master modern CSS layout techniques with Flexbox and CSS Grid for responsive designs.',
+                        duration: 14,
+                        difficulty: 'intermediate',
+                        category: 'web',
+                        topics: ['Flexbox', 'Grid', 'Responsive'],
+                        completed: false,
+                        featured: false,
+                        rating: 4.7,
+                        students: 9200,
+                        image: 'https://kimi-web-img.moonshot.cn/img/i.sstatic.net/a8df136e8357c19150228c1029d8a1596c6384da.png'
+                    },
+                    {
+                        id: 8,
+                        title: 'Python Functions',
+                        description: 'Deep dive into Python functions including parameters, return values, and scope.',
+                        duration: 13,
+                        difficulty: 'beginner',
+                        category: 'python',
+                        topics: ['Parameters', 'Return', 'Scope'],
+                        completed: false,
+                        featured: false,
+                        rating: 4.6,
+                        students: 7800,
+                        image: 'https://kimi-web-img.moonshot.cn/img/cdn.pixabay.com/2d757b8a06225a94e4ffbbc0ffbb8445114c84a3.jpg'
+                    }
+                ];
+
+                this.filteredLessons = [...this.lessons];
+            }
+
+            setupEventListeners() {
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.setActiveFilter(e.target);
+                        this.currentFilter = e.target.dataset.filter;
+                        this.filterAndRender();
+                    });
+                });
+
+                // Search
+                document.getElementById('lesson-search').addEventListener('input', (e) => {
+                    this.searchLessons(e.target.value);
+                });
+
+                // Sort
+                document.getElementById('sort-select').addEventListener('change', (e) => {
+                    this.currentSort = e.target.value;
+                    this.filterAndRender();
+                });
+
+                // Load more
+                document.getElementById('load-more-btn').addEventListener('click', () => {
+                    this.displayedCount += 12;
+                    this.renderLessons();
+                });
+            }
+
+            setActiveFilter(activeBtn) {
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('bg-emerald-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                activeBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                activeBtn.classList.add('bg-emerald-500', 'text-white');
+            }
+
+            filterAndRender() {
+                this.filterLessons();
+                this.sortLessons();
+                this.renderLessons();
+            }
+
+            filterLessons() {
+                if (this.currentFilter === 'all') {
+                    this.filteredLessons = [...this.lessons];
+                } else {
+                    this.filteredLessons = this.lessons.filter(lesson => 
+                        lesson.category === this.currentFilter
+                    );
+                }
+            }
+
+            sortLessons() {
+                switch (this.currentSort) {
+                    case 'difficulty':
+                        const difficultyOrder = { 'beginner': 1, 'intermediate': 2, 'advanced': 3 };
+                        this.filteredLessons.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
+                        break;
+                    case 'duration':
+                        this.filteredLessons.sort((a, b) => a.duration - b.duration);
+                        break;
+                    case 'title':
+                        this.filteredLessons.sort((a, b) => a.title.localeCompare(b.title));
+                        break;
+                    default:
+                        // Keep original order
+                        break;
+                }
+            }
+
+            searchLessons(query) {
+                if (!query.trim()) {
+                    this.filterAndRender();
+                    return;
+                }
+
+                const searchTerm = query.toLowerCase();
+                this.filteredLessons = this.lessons.filter(lesson =>
+                    lesson.title.toLowerCase().includes(searchTerm) ||
+                    lesson.description.toLowerCase().includes(searchTerm) ||
+                    lesson.topics.some(topic => topic.toLowerCase().includes(searchTerm))
+                );
+
+                this.renderLessons();
+            }
+
+            renderLessons() {
+                const container = document.getElementById('lessons-grid');
+                const loadMoreBtn = document.getElementById('load-more-btn');
+                const lessonCount = document.getElementById('lesson-count');
+
+                const lessonsToShow = this.filteredLessons.slice(0, this.displayedCount);
+                
+                container.innerHTML = '';
+                lessonsToShow.forEach(lesson => {
+                    container.appendChild(this.createLessonCard(lesson));
+                });
+
+                lessonCount.textContent = this.filteredLessons.length;
+
+                // Show/hide load more button
+                if (lessonsToShow.length >= this.filteredLessons.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'block';
+                }
+
+                // Animate cards
+                if (typeof anime !== 'undefined') {
+                    anime({
+                        targets: '.lesson-card',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 600,
+                        delay: anime.stagger(100)
+                    });
+                }
+            }
+
+            createLessonCard(lesson) {
+                const card = document.createElement('div');
+                card.className = `lesson-card bg-white rounded-xl shadow-lg overflow-hidden ${lesson.completed ? 'completed' : ''}`;
+                card.dataset.category = lesson.category;
+                card.dataset.difficulty = lesson.difficulty;
+                
+                const difficultyColor = {
+                    'beginner': 'bg-green-100 text-green-800',
+                    'intermediate': 'bg-yellow-100 text-yellow-800',
+                    'advanced': 'bg-red-100 text-red-800'
+                };
+
+                card.innerHTML = `
+                    <div class="aspect-video bg-gray-200 overflow-hidden">
+                        <img src="${lesson.image}" alt="${lesson.title}" class="w-full h-full object-cover lesson-image">
+                        ${lesson.completed ? '<div class="absolute inset-0 bg-emerald-500 bg-opacity-20 flex items-center justify-center"><div class="bg-emerald-500 text-white rounded-full p-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg></div></div>' : ''}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs px-2 py-1 rounded-full ${difficultyColor[lesson.difficulty]}">
+                                ${lesson.difficulty}
+                            </span>
+                            <span class="text-xs text-gray-500">${lesson.duration} min</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${lesson.title}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-3">${lesson.description}</p>
+                        
+                        <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                            <div class="flex items-center">
+                                <span class="text-yellow-500 mr-1">★</span>
+                                <span>${lesson.rating}</span>
+                            </div>
+                            <span>${lesson.students.toLocaleString()} students</span>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-1 mb-4">
+                            ${lesson.topics.slice(0, 2).map(topic => 
+                                `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">${topic}</span>`
+                            ).join('')}
+                            ${lesson.topics.length > 2 ? `<span class="text-xs text-gray-500">+${lesson.topics.length - 2} more</span>` : ''}
+                        </div>
+                        
+                        <button data-action="complete-lesson" data-lesson-id="${lesson.id}" 
+                                class="w-full ${lesson.completed ? 'bg-gray-300 text-gray-600' : 'bg-emerald-500 hover:bg-emerald-600 text-white'} py-2 px-4 rounded-lg font-medium transition-colors">
+                            ${lesson.completed ? 'Completed ✓' : 'Start Lesson'}
+                        </button>
+                    </div>
+                `;
+
+                return card;
+            }
+
+            initializeCarousel() {
+                const featuredLessons = this.lessons.filter(lesson => lesson.featured);
+                const carouselContainer = document.getElementById('featured-lessons');
+                
+                featuredLessons.forEach(lesson => {
+                    const slide = document.createElement('li');
+                    slide.className = 'splide__slide';
+                    slide.innerHTML = `
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden mx-2">
+                            <div class="aspect-video bg-gray-200 overflow-hidden">
+                                <img src="${lesson.image}" alt="${lesson.title}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-800">
+                                        Featured
+                                    </span>
+                                    <span class="text-xs text-gray-500">${lesson.duration} min</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">${lesson.title}</h3>
+                                <p class="text-gray-600 mb-4">${lesson.description}</p>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <span class="text-yellow-500 mr-1">★</span>
+                                        <span>${lesson.rating}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>${lesson.students.toLocaleString()} students</span>
+                                    </div>
+                                </div>
+                                <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors">
+                                    Start Featured Lesson
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    carouselContainer.appendChild(slide);
+                });
+
+                // Initialize Splide carousel
+                if (typeof Splide !== 'undefined') {
+                    new Splide('#featured-carousel', {
+                        type: 'loop',
+                        perPage: 3,
+                        perMove: 1,
+                        gap: '1rem',
+                        autoplay: true,
+                        interval: 5000,
+                        breakpoints: {
+                            1024: { perPage: 2 },
+                            640: { perPage: 1 }
+                        }
+                    }).mount();
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new LessonManager();
+        });
+    </script>
+</body>
+</html>
